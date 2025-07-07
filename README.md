@@ -1,15 +1,14 @@
-# Title	
+# CTmax acclimation in *Diacyclops navus*
 
-Author<sup>1</sup>, Author<sup>2</sup>, Author<sup>3</sup> 	
+Author
 
-1. Affiliation	
-2. Affiliation	
-3. Affiliation	
-
-Project description. Includes basic info about collection locations and times. 
+University of Massachusetts Lowell, Department of Biological Sciences	
 
 
-<a href="DOI LINK GOES HERE"><img src="https://img.shields.io/badge/Publication%20Here-Here?style=for-the-badge&labelColor=grey&color=577D58"/></a>    <a href="PREPRINT LINK GOES HERE"><img src="https://img.shields.io/badge/Preprint%20Here-Here?style=for-the-badge&labelColor=grey&color=6F92B8"/></a>    <a href="DATA LINK GOES HERE"><img src="https://img.shields.io/badge/Dataset%20Here-Here?style=for-the-badge&labelColor=grey&color=EAB221"/></a>
+This project folder contains data on the Critical Thermal Maxima (CTmax) and body size of *Diacyclops navus*, collected in June 2025 from Grand Lake Colorado. The project tests two questions: what is the shape of the CTmax reaction norm in this species, and how rapidly does acclimation occur at different temperatures? 
+
+
+<!-- <a href="DOI LINK GOES HERE"><img src="https://img.shields.io/badge/Publication%20Here-Here?style=for-the-badge&labelColor=grey&color=577D58"/></a>    <a href="PREPRINT LINK GOES HERE"><img src="https://img.shields.io/badge/Preprint%20Here-Here?style=for-the-badge&labelColor=grey&color=6F92B8"/></a>    <a href="DATA LINK GOES HERE"><img src="https://img.shields.io/badge/Dataset%20Here-Here?style=for-the-badge&labelColor=grey&color=EAB221"/></a> -->
 
 ## Directory Structure 
 The root directory contains the README and Licensing files, along with a .Rproj file and four sub-directories: Data, Manuscript, Output, and Scripts.  
@@ -61,4 +60,4 @@ Running under: macOS Ventura 13.3.1
 
 ## Funding
 
-This study was funded by grants from ____.
+This study was supported by internal funds from the University of Massachusetts Lowell.
