@@ -19,6 +19,11 @@ if(process_data == T){
 ### Read in the PROCESSED data ###
 ##################################
 
+ctmax_data = read.csv(file = "Raw_data/d_navus_acc_ctmax.csv", na.strings = "NA") %>% 
+  drop_na(acc_temp) %>%  
+  mutate(day = factor(day), 
+         acc_temp = factor(acc_temp))
+
 if(make_report == T){
   render(input = "Output/Reports/report.Rmd", #Input the path to your .Rmd file here
          #output_file = "report", #Name your file here if you want it to have a different name; leave off the .html, .md, etc. - it will add the correct one automatically

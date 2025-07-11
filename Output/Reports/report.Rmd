@@ -82,3 +82,29 @@ theme_matt_facets = function(base_size = 18,
     )
 }
 ```
+
+```{r}
+ctmax_data %>% group_by(exp_rep, day, acc_temp) %>% 
+  summarise(mean_ctmax = mean(ctmax, na.rm = T)) %>% 
+  ggplot(aes(x = day, y = mean_ctmax, colour = acc_temp, group = acc_temp)) + 
+  geom_point(data = ctmax_data, aes(y = ctmax), 
+             alpha = 0.5, 
+             position = position_jitter(width = 0.05, height = 0)) +
+    geom_line(linewidth = 1.5) + 
+  geom_point(size = 3) + 
+  scale_colour_brewer(type = "div", direction = -1, palette = 5) + 
+  labs(colour = "Acc. Temp.") +
+  theme_matt() + 
+  theme(legend.position = "right")
+```
+
+```{r}
+
+acc.model = lme4::lmer(ctmax ~ day * acc_temp + (1|rep) + (1|tube), data = ctmax_data)
+
+car::Anova(acc.model)
+
+emmeans::emmeans(acc.model, specs = trt.vs.ctrlk ~ acc_temp | day, by = "day", ref = 2) %>% emmeans::contrast() %>%  plot()
+
+```
+
