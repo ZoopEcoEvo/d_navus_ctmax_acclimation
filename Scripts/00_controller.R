@@ -19,7 +19,7 @@ if(process_data == T){
 ### Read in the PROCESSED data ###
 ##################################
 
-ctmax_data = read.csv(file = "Raw_data/d_navus_acc_ctmax.csv", na.strings = "NA") %>% 
+ctmax_data = read.csv(file = "Raw_data/ctmax_data.csv", na.strings = "NA") %>% 
   drop_na(acc_temp) %>%  
   mutate(day = factor(day), 
          acc_temp = factor(acc_temp))
