@@ -105,7 +105,14 @@ acc.model = lme4::lmer(ctmax ~ day * acc_temp + (1|rep) + (1|tube), data = ctmax
 
 car::Anova(acc.model)
 
-emmeans::emmeans(acc.model, specs = trt.vs.ctrlk ~ acc_temp | day, by = "day", ref = 2) %>% emmeans::contrast() %>%  plot()
+emmeans::emmeans(acc.model, "acc_temp", by = "day") %>% emmeans::contrast("trt.vs.ctrlk", ref = 2) %>% 
+  plot() +  
+  geom_vline(xintercept = 0) + 
+  labs(x = "Change in CTmax Relative to Control (°C)",
+       y = "Treatment") + 
+  coord_flip() + 
+  theme_bw(base_size = 24) + 
+  theme(panel.grid = element_blank())
 
 ```
 
@@ -114,10 +121,11 @@ emmeans::emmeans(acc.model, specs = trt.vs.ctrlk ~ acc_temp | day, by = "day", r
 ctmax_data %>% 
   group_by(exp_rep, day, acc_temp) %>% 
   summarise(mean_ctmax = mean(ctmax, na.rm = T)) %>% 
-  mutate(acc_temp = as.numeric(as.character(acc_temp))) %>% 
-  filter(day == 1) %>% 
   ungroup() %>% 
+  mutate(acc_temp = as.numeric(as.character(acc_temp)),
+         day = as.numeric(as.character(day))) %>% 
   ggplot(aes(x = acc_temp, y = mean_ctmax)) + 
+  facet_wrap(day~.) + 
   geom_point(size = 3) + 
   geom_smooth(method = "lm", se = F, colour = "black") + 
   theme_matt() + 
