@@ -22,7 +22,8 @@ if(process_data == T){
 ctmax_data = read.csv(file = "Raw_data/ctmax_data.csv", na.strings = "NA") %>% 
   drop_na(acc_temp) %>%  
   mutate(day = factor(day), 
-         acc_temp = factor(acc_temp))
+         acc_temp = factor(acc_temp),
+         rep_id = paste(exp_rep, acc_temp, sep = "_")) 
 
 if(make_report == T){
   render(input = "Output/Reports/report.Rmd", #Input the path to your .Rmd file here
