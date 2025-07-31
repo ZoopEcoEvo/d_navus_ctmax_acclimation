@@ -4,7 +4,7 @@ library(tidyverse)
 
 #Determine which scripts should be run
 process_data = F #Runs data analysis 
-make_report = F #Runs project summary
+make_report = T #Runs project summary
 knit_manuscript = F #Compiles manuscript draft
 
 ############################
@@ -21,9 +21,7 @@ if(process_data == T){
 
 ctmax_data = read.csv(file = "Raw_data/ctmax_data.csv", na.strings = "NA") %>% 
   drop_na(acc_temp) %>%  
-  mutate(day = factor(day), 
-         acc_temp = factor(acc_temp),
-         rep_id = paste(exp_rep, acc_temp, sep = "_")) 
+  mutate(rep_id = paste(exp_rep, acc_temp, sep = "_")) 
 
 if(make_report == T){
   render(input = "Output/Reports/report.Rmd", #Input the path to your .Rmd file here
