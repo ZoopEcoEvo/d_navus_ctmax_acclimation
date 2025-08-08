@@ -173,7 +173,7 @@ emmeans::emmeans(acc.model, "acc_temp", by = "day") %>% emmeans::contrast("trt.v
   labs(x = "Change in CTmax Relative \nto Control (°C)",
        y = "Treatment") + 
   #coord_flip() + 
-  scale_y_discrete(labels = c("16°C Effect", "22°C Effect")) + 
+  scale_y_discrete(labels = c("10°C Effect", "22°C Effect")) + 
   theme_bw(base_size = 24) + 
   theme(panel.grid = element_blank())
 

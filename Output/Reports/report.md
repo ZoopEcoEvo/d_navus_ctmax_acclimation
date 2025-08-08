@@ -1,6 +1,6 @@
 CTmax acclimation in Diacyclops navus
 ================
-2025-07-31
+2025-08-08
 
 - [Project Description](#project-description)
 - [CTmax Measurements](#ctmax-measurements)
@@ -48,8 +48,8 @@ ctmax_data %>%
 |   0 |   11 |   10 |   10 |
 |   1 |   10 |   12 |   11 |
 |   2 |   11 |   11 |   11 |
-|   3 |    8 |    7 |    7 |
-|   6 |    7 |    7 |    8 |
+|   3 |   12 |   10 |   11 |
+|   6 |   11 |   11 |   11 |
 
 CTmax data, again combined across all replicates is shown below, plotted
 against acclimation duration.
@@ -123,10 +123,10 @@ car::Anova(acc.model, type = "III") %>%
 
 |              |        Chisq |  Df | Pr(\>Chisq) |
 |:-------------|-------------:|----:|------------:|
-| (Intercept)  | 18894.034056 |   1 |   0.0000000 |
-| day          |    20.303112 |   4 |   0.0004351 |
-| acc_temp     |     4.485281 |   2 |   0.1061778 |
-| day:acc_temp |    20.309238 |   8 |   0.0092273 |
+| (Intercept)  | 19879.658819 |   1 |   0.0000000 |
+| day          |    22.429489 |   4 |   0.0001646 |
+| acc_temp     |     4.846228 |   2 |   0.0886451 |
+| day:acc_temp |    25.014735 |   8 |   0.0015456 |
 
 Marginal means for each acclimation temperature x duration combination
 were extracted from this model. Contrasts were generated using a
@@ -141,7 +141,7 @@ emmeans::emmeans(acc.model, "acc_temp", by = "day") %>% emmeans::contrast("trt.v
   labs(x = "Change in CTmax Relative \nto Control (°C)",
        y = "Treatment") + 
   #coord_flip() + 
-  scale_y_discrete(labels = c("16°C Effect", "22°C Effect")) + 
+  scale_y_discrete(labels = c("10°C Effect", "22°C Effect")) + 
   theme_bw(base_size = 24) + 
   theme(panel.grid = element_blank())
 ```
