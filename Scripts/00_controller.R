@@ -20,6 +20,7 @@ if(process_data == T){
 ##################################
 
 ctmax_data = read.csv(file = "Raw_data/ctmax_data.csv", na.strings = "NA") %>% 
+  filter(ctmax > 31) %>%  #One data point removed for very low CTmax
   drop_na(acc_temp) %>%  
   mutate(rep_id = paste(exp_rep, acc_temp, sep = "_")) 
 

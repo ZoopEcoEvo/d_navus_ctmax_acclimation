@@ -108,7 +108,8 @@ ctmax_data %>%
 CTmax data, again combined across all replicates is shown below, plotted against acclimation duration. 
 
 ```{r}
-ctmax_data %>% group_by(day, acc_temp) %>% 
+ctmax_data %>% 
+  group_by(day, acc_temp) %>% 
   summarise(mean_ctmax = mean(ctmax, na.rm = T)) %>% 
   ungroup() %>% 
   ggplot(aes(x = day, y = mean_ctmax, colour = factor(acc_temp))) + 
@@ -118,10 +119,32 @@ ctmax_data %>% group_by(day, acc_temp) %>%
   geom_line(linewidth = 1.5) + 
   geom_point(size = 3) + 
   scale_colour_manual(values = c("slateblue", "forestgreen", "gold")) + 
-  labs(colour = "Acc. Temp.") +
+  labs(colour = "Acc. Temp.",
+       y = "CTmax (°C)",
+       x = "Experiment Day") +
   theme_matt() + 
   theme(legend.position = "right")
 ```
+
+Data is shown below separated by acclimation temperature, with mean CTmax on each day for each of the three experimental replicates. There are distinct differences in the trend lines across the acclimation temperatures. 
+
+```{r fig.width=11, fig.height=4}
+ctmax_data %>% group_by(day, acc_temp, exp_rep) %>% 
+  summarise(mean_ctmax = mean(ctmax, na.rm = T)) %>% 
+  ungroup() %>% 
+  ggplot(aes(x = day, y = mean_ctmax, colour = factor(acc_temp))) + 
+  facet_grid(.~acc_temp) + 
+  geom_point(size = 3, alpha = 0.5) +
+  geom_smooth(method = "lm", se = F, 
+              linewidth = 2) + 
+  scale_colour_manual(values = c("slateblue", "forestgreen", "gold")) + 
+  labs(colour = "Acc. Temp.",
+       y = "CTmax (°C)",
+       x = "Experiment Day") +
+  theme_matt_facets() + 
+  theme(legend.position = "right")
+```
+
 
 Data here is shown for each experimental replicate separately. 
 
@@ -151,7 +174,7 @@ model_data = ctmax_data %>%
   mutate(day = factor(day), 
          acc_temp = factor(acc_temp))
 
-acc.model = lme4::lmer(ctmax ~ day * acc_temp + (1|rep) + (1|tube) + (1|exp_rep), 
+acc.model = lme4::lmer(ctmax ~ day * acc_temp + (1|tube) + (1|exp_rep), 
                        data = model_data)
 
 performance::check_model(acc.model)
@@ -188,7 +211,7 @@ emmeans::emmeans(acc.model, "acc_temp", by = "day") %>% emmeans::contrast("trt.v
   ggplot(aes(x = day, y = estimate, colour = contrast)) + 
   geom_hline(yintercept = 0) +
   geom_point(size = 3) + 
-  geom_smooth(method = "lm", linewidth = 2) + 
+  geom_smooth(method = "lm", linewidth = 2, se = F) + 
   scale_colour_manual(values = c("Cold Acc." = "dodgerblue", 
                                  "Hot Acc." = "indianred")) + 
   labs(x = "Acclimation Duration",
@@ -207,7 +230,6 @@ The relationship between CTmax and acclimation temperature is shown here, broken
 ```{r}
 
 ctmax_data %>% 
-  filter(ctmax > 31) %>% 
   # filter(day != 0) %>% 
   # group_by(exp_rep, day, acc_temp) %>% 
   # summarise(mean_ctmax = mean(ctmax, na.rm = T)) %>% 
@@ -245,6 +267,8 @@ ggplot(daily_arr, aes(x = day, y = arr)) +
   geom_hline(yintercept = 0) + 
   geom_point(size = 3) + 
   geom_smooth(method = "lm", formula = y~log(x + 0.06)) + 
+  labs(x = "Experiment Day", 
+       y = "Acclimation Response Ratio") + 
   theme_matt()
 
 ```
