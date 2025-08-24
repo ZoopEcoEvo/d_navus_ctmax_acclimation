@@ -230,18 +230,19 @@ The relationship between CTmax and acclimation temperature is shown here, broken
 ```{r}
 
 ctmax_data %>% 
-  # filter(day != 0) %>% 
+  filter(day == 6) %>% 
   # group_by(exp_rep, day, acc_temp) %>% 
   # summarise(mean_ctmax = mean(ctmax, na.rm = T)) %>% 
   # ungroup() %>% 
   # mutate(acc_temp = as.numeric(as.character(acc_temp)),
   #        day = as.numeric(as.character(day))) %>% 
   ggplot(aes(x = acc_temp, y = ctmax)) + 
-  facet_wrap(day~.) + 
   geom_point(size = 3, position = position_jitter(width = 0.3, height = 0),
              alpha = 0.5) + 
   geom_smooth(se = F, colour = "black", linewidth = 2) + 
   scale_x_continuous(breaks = c(10, 16, 22)) + 
+  labs(x = "Acc. Temp. (°C)", 
+       y = "CTmax (°C)") + 
   theme_matt() + 
   theme(legend.position = "right")
 

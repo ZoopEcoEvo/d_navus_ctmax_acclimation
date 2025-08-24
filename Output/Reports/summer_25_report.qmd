@@ -1,0 +1,284 @@
+---
+title: "Summer 2025 Report"
+format:
+  typst:
+    toc: true
+    number-sections: false
+    code-overflow: wrap
+author: "Nathan Gaffin, Zeba Mohid, Zoey Mourrousas, Taisiya Petrova"
+date: "`r Sys.Date()`"
+bibliography: references.bib
+---
+
+```{r message=F, warning=F, echo = F}
+library(tidyverse)
+
+knitr::opts_chunk$set(
+  fig.align = "center",
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE,
+  collapse = T
+)
+
+theme_matt = function(base_size = 18,
+                      dark_text = "grey20"){
+  mid_text <-  monochromeR::generate_palette(dark_text, "go_lighter", n_colours = 5)[2]
+  light_text <-  monochromeR::generate_palette(dark_text, "go_lighter", n_colours = 5)[3]
+  
+  ggpubr::theme_pubr(base_family="sans") %+replace% 
+    theme(
+      panel.background  = element_rect(fill="transparent", colour=NA), 
+      plot.background = element_rect(fill="transparent", colour=NA), 
+      legend.background = element_rect(fill="transparent", colour=NA),
+      legend.key = element_rect(fill="transparent", colour=NA),
+      text = element_text(colour = mid_text, lineheight = 1.1),
+      title = element_text(size = base_size * 1.5,
+                           colour = dark_text),
+      axis.text = element_text(size = base_size,
+                               colour = mid_text),
+      axis.title.x = element_text(size = base_size * 1.2,
+                                  margin = unit(c(3, 0, 0, 0), "mm")),
+      axis.title.y = element_text(size = base_size * 1.2,
+                                  margin = unit(c(0, 5, 0, 0), "mm"), 
+                                  angle = 90),
+      legend.text = element_text(size=base_size * 0.9),
+      legend.title = element_text(size = base_size * 0.9, 
+                                  face = "bold"),
+      plot.margin = margin(0.25, 0.25, 0.25, 0.25,"cm")
+    )
+}
+
+theme_matt_facets = function(base_size = 18,
+                             dark_text = "grey20"){
+  mid_text <-  monochromeR::generate_palette(dark_text, "go_lighter", n_colours = 5)[2]
+  light_text <-  monochromeR::generate_palette(dark_text, "go_lighter", n_colours = 5)[3]
+  
+  theme_bw(base_family="sans") %+replace% 
+    theme(
+      panel.grid = element_blank(),
+      panel.background  = element_rect(fill="transparent", colour=NA), 
+      plot.background = element_rect(fill="transparent", colour=NA), 
+      legend.background = element_rect(fill="transparent", colour=NA),
+      legend.key = element_rect(fill="transparent", colour=NA),
+      text = element_text(colour = mid_text, lineheight = 1.1),
+      strip.text.x = element_text(size = base_size),
+      title = element_text(size = base_size * 1.5,
+                           colour = dark_text),
+      axis.text = element_text(size = base_size,
+                               colour = mid_text),
+      axis.title.x = element_text(size = base_size * 1.2,
+                                  margin = unit(c(3, 0, 0, 0), "mm")),
+      axis.title.y = element_text(size = base_size * 1.2,
+                                  margin = unit(c(0, 5, 0, 0), "mm"), 
+                                  angle = 90),
+      legend.text = element_text(size=base_size * 0.9),
+      legend.title = element_text(size = base_size * 0.9, 
+                                  face = "bold"),
+      plot.margin = margin(0.25, 0.25, 0.25, 0.25,"cm")
+    )
+}
+
+```
+
+# CTmax Acclimation in *Diacyclops navus*
+
+## Introduction
+
+The recent unprecedented rates of climate change and global temperature increases, along with other anthropogenic changes, threaten the safety and health of freshwater ecosystems [@sayer2025]. A predicted increase of 1.4-5.8°C in global surface temperatures within the next century will have large consequences for freshwater ecosystems, as air temperature and water temperature have a close relationship [@heino2009]. Observed warming has already had strong effects on the abundance and distribution of aquatic biodiversity [@khaliq2024]. These drastically increasing temperatures strain organismal performance as temperatures approach an individual’s thermal limit, or the upper temperature at which an organism can maintain necessary functions. The strain placed on these freshwater organisms can, however, be mitigated by plasticity, an organism's ability to alter their behaviors and physiological traits in response to environmental changes[@somero2010]. As plasticity can occur within generations, it will likely play an important role in helping organisms cope with environmental pressures, ensuring the survival of populations and potentially buying time for genetic adaptation to future conditions [@kelly2019]. Although plasticity can help to mitigate the consequences of climate change, there are still major uncertainties about how acclimation affects thermal limits, and how rapidly this acclimation occurs [@burton2025].
+
+*Diacyclops navus* is a widespread species of cyclopoid copepod found in fresh water environments such as ponds and marshes [@reid1989]. *D. navus* has a broad latitudinal distribution, being found from waterways near the Gulf of Mexico to lakes of Northern Canada [@reid1989]. This species is often observed in shallow water, but is occasionally found in larger water bodies as well [@reid1989]. The broad distribution and range of water temperatures experienced suggest *D. navus* should be able to acclimate to different temperatures, although the role of local adaptation is unknown. *D. navus* is an ideal laboratory model system given its short generation times and the production of multiple clutches, leading to rapid population growth (Gerald G. Marten & Janet W. Reid). When collected from the southern portion of its range, *D. navus* grows well in the laboratory at 27 °C [@reid1989]. With food this laboratory species grows well on a diet of cryptomonads (Sasaki, unpublished data).
+
+This experiment was conducted to test the effect of different acclimation temperatures on the thermal maximum of *Diacyclops navus*. The experiment was also conducted to test how long acclimation takes, as well as whether the rate of acclimation differs for higher and lower acclimation temperatures. We hypothesize that higher acclimation temperatures will generally increase the CTmax of *Diacyclops navus*, while lower acclimation temperatures will result in a lower CTmax than that of the control. We also hypothesize that animals that are acclimated at a higher temperature will acclimate at a faster rate than animals acclimated at a lower temperature.
+
+## Data Sources
+
+**GitHub Repo** - [**d_navus_ctmax_acclimation**](https://github.com/ZoopEcoEvo/d_navus_ctmax_acclimation)
+
+The specific data set included in this report is:
+
+```{r echo = T}
+
+ctmax_data = read.csv(file = "https://raw.githubusercontent.com/ZoopEcoEvo/d_navus_ctmax_acclimation/refs/heads/main/Raw_data/ctmax_data.csv", na.strings = "NA") %>% 
+  filter(ctmax > 31) %>%  #One data point removed for very low CTmax
+  drop_na(acc_temp) %>%  
+  mutate(rep_id = paste(exp_rep, acc_temp, sep = "_")) 
+
+```
+
+## Methods
+
+*Diacyclops navus* individuals were collected from Grand Lake, Colorado (40.250423, -105.819529) in June 2025. Animals were transferred to the laboratory at UMass Lowell and maintained at 16 °C in a walk-in environmental chamber with a 12:12 light dark cycle. Cultures were fed ad libitum with *Cryptomonas ozolini*.
+
+Experiments were run over the course of three weeks, with each experimental replicate beginning and ending on a Monday. To initiate each experimental replicate, a total of 72 non-gravid, adult F₀ females were isolated from the lab culture. Individuals were randomly sorted into six groups (12 individuals per replicate), which were divided amongst three temperature treatments: 10 °C, 16 °C, and 20 °C. Each temperature treatment had two replicate groups (A and B dishes). Each group was housed in an individual dish (six dishes total), each containing 50 mL of Dilute Instant Ocean (DIO; 1 gram salt mix per liter DI water) and fed with two drops of dense *Cryptomonas ozolini* culture. All replicates were initially kept at 16 °C in a benchtop incubator to allow time for individuals to acclimate to the control conditions for 24 h. On Acclimation Day 0 (Tuesday), Critical Thermal Maximum (CTmax) was measured for three or four individuals from each acclimation group to establish a baseline CTmax value.
+
+The CTmax Assay protocol used during these experiments was a modification of previous approaches [@sasaki2023]. A simple system was developed to gradually increase the temperature in 50 mL glass vials, comprising a water bath, a heating element, and a small aquarium pump. The water bath was filled with 2 L of tap water. A rack with 12 50 mL glass vials was placed inside this water bath. Each tube was filled with 10mL of DIO. One tube was randomly selected to hold a thermometer to keep track of water temperature inside the tubes. Ice was added to the water bath to bring the water temperature to the appropriate starting point. The aquarium pump was used to circulate water to ensure consistent temperatures throughout the bath. After the water bath was set to the correct temperature, any excess water was removed (final volume 2L). Individuals from the different treatment groups were randomly assigned to tubes. Once all individuals were placed into their respective tubes, the heating element was turned on, initiating the temperature ramp. Individuals were checked intermittently for response to stimuli (about every 0.3C temperature increase until around 30°C) during the initial portion of the temperature ramp. After temperatures exceeded 30°C, individuals were monitored continuously. Individuals were removed from the water bath when they reached their CTmax, indicated by the lack of response to stimulus (in this case, the lack of motion over 10 seconds while gentle water movement was generated by turning the glass tube). CTmax (in °C) was recorded as the temperature individuals ceased responding to stimuli based on the thermometer in the glass vial. The temperature ramp continued until all copepods were removed from the water bath. At the end of each assay, the heating element and aquarium pump were turned off and the thermometer taken out of the remaining tube. Once each CTmax assay was completed, all individuals were transferred to the lid of a 96-well plate for size imaging using a phone camera attached to a compound microscope (Olympus BX51). Before taking pictures of the animals, a picture of a scale micrometer was taken. Each individual was imaged after water had been removed from the droplet to ensure correct body orientation and to limit distortion.
+
+Following the initial CTmax assay, replicate dishes were transferred to benchtop incubators set to their assigned acclimation temperatures. CTmax assays were repeated on Acclimation Day 1, 2, 3, and 6 (Wednesday, Thursday, Friday, and Monday). The procedure was identical to the initial CTmax assay described above, except the start temperature was \~9°C and individuals were added to the water bath when temperatures reached their acclimation temperature (10°C, 16°C, or 22°C) to minimize handling stress and avoid effects of sudden changes in temperature on the upper thermal limits. Water changes and feeding were done on Acclimation Days 1 and 3 (Wednesday and Friday). During these changes, individuals remaining in the dishes were transferred to fresh DIO medium and provided with fresh food solution.
+
+CTmax values were analyzed using a linear mixed effects model, with CTmax modeled as a function of acclimation day and temperature (with interaction). Tube number (and therefore relative position within the waterbath) and experimental replicate were included as random effects. Marginal means for each day contrasting the two acclimation temperatures (10°C and 22°C) against the control treatment (16°C) were calculated from this model. These contrasts represent the effect of acclimation to the different temperatures over time.
+
+```{r}
+
+model_data = ctmax_data %>% 
+  mutate(day = factor(day), 
+         acc_temp = factor(acc_temp))
+
+acc.model = lme4::lmer(ctmax ~ day * acc_temp + (1|tube) + (1|exp_rep), 
+                       data = model_data)
+
+```
+
+## Data Summary
+
+Across the three experimental replicates, a total of `r dim(ctmax_data)[1]` CTmax measurements were made. One low CTmax value has been excluded from this count and from the analyses (30.2°C). The table below shows how these measurements are distributed across acclimation temperatures.
+
+```{r}
+#| tbl-cap: The number of CTmax measurements per day and acclimation treatment. 
+#| label: table-1
+#| tbl-cap-location: top
+
+ctmax_data %>% 
+  group_by(day, acc_temp) %>% 
+  count() %>% 
+  pivot_wider(names_from = acc_temp, values_from = n) %>% 
+  janitor::clean_names() %>% 
+  select("Day" = day, "10°C" = x10, "16°C" = x16, "22°C" = x22) %>% 
+  knitr::kable() 
+
+```
+
+The CTmax values recorded ranged from `r paste(range(ctmax_data$ctmax), collapse = " to ")`°C. Notably, CTmax values varied substantially within each daily set of measurements (Figure 1), as well as between experimental replicates (Figure 2).
+
+```{r}
+
+ctmax_data %>% 
+  group_by(day, acc_temp) %>% 
+  summarise(mean_ctmax = mean(ctmax, na.rm = T)) %>% 
+  ungroup() %>% 
+  ggplot(aes(x = day, y = mean_ctmax, colour = factor(acc_temp))) + 
+  geom_point(data = ctmax_data, aes(y = ctmax), 
+             alpha = 0.5, 
+             position = position_jitter(width = 0.05, height = 0)) +
+  geom_line(linewidth = 1.5) + 
+  geom_point(size = 3) + 
+  scale_colour_manual(values = c("darkcyan", "chartreuse3", "gold")) + 
+  labs(colour = "Acc. Temp.",
+       y = "CTmax (°C)",
+       x = "Experiment Day") +
+  theme_matt(base_size = 12) + 
+  theme(legend.position = "right")
+
+```
+
+```{r fig.width=7, fig.height=3.5}
+
+ctmax_data %>% group_by(exp_rep, day, rep_id, acc_temp) %>% 
+  summarise(mean_ctmax = mean(ctmax, na.rm = T)) %>% 
+  ungroup() %>% 
+  ggplot(aes(x = day, y = mean_ctmax, colour = factor(acc_temp), group = rep_id)) + 
+  facet_wrap(exp_rep~.) + 
+  geom_point(data = ctmax_data, aes(y = ctmax), 
+             alpha = 0.5, 
+             position = position_jitter(width = 0.05, height = 0)) +
+  geom_line(linewidth = 1) + 
+  geom_point(size = 2) + 
+  scale_colour_manual(values = c("darkcyan", "chartreuse3", "gold")) + 
+  labs(colour = "Acc. Temp.",
+       y = "CTmax (°C)",
+       x = "Day") +
+  theme_matt_facets(base_size = 12) + 
+  theme(legend.position = "bottom")
+
+```
+
+Nonetheless, across the three experimental replicates, there was a clear decrease in CTmax over time in the 10°C acclimation treatment while CTmax was constant over time in the 16°C and 22°C acclimation treatments (Figure 3).
+
+```{r fig.width=7, fig.height=3}
+ctmax_data %>% group_by(day, acc_temp, exp_rep) %>% 
+  summarise(mean_ctmax = mean(ctmax, na.rm = T)) %>% 
+  ungroup() %>% 
+  ggplot(aes(x = day, y = mean_ctmax, colour = factor(acc_temp))) + 
+  facet_grid(.~acc_temp) + 
+  geom_point(size = 3, alpha = 0.5) +
+  geom_smooth(method = "lm", se = F, 
+              linewidth = 2) + 
+  scale_colour_manual(values = c("darkcyan", "chartreuse3", "gold")) + 
+  labs(colour = "Acc. Temp.",
+       y = "CTmax (°C)",
+       x = "Experiment Day") +
+  theme_matt_facets(base_size = 12) + 
+  theme(legend.position = "none")
+```
+
+Average CTmax values were similar across the three treatment groups after the first day of acclimation, but had diverged (at least for the 10°C group) after Day 6.
+
+```{r}
+
+ctmax_data %>% 
+  filter(day %in% c(1,6)) %>% 
+  group_by(acc_temp, day) %>% 
+  summarize(mean_ctmax = round(mean(ctmax), 2)) %>% 
+  pivot_wider(names_from = day, values_from = mean_ctmax, names_prefix = "Day ") %>% 
+  select("Acc. Temp." = acc_temp, `Day 1`, `Day 6`) %>% 
+  knitr::kable()
+
+```
+
+The result of this difference in acclimation effects across temperatures is a distinctly non-linear reaction norm.
+
+```{r fig.width=5, fig.height=5}
+ctmax_data %>% 
+  filter(day == 6) %>% 
+  # group_by(exp_rep, day, acc_temp) %>% 
+  # summarise(mean_ctmax = mean(ctmax, na.rm = T)) %>% 
+  # ungroup() %>% 
+  # mutate(acc_temp = as.numeric(as.character(acc_temp)),
+  #        day = as.numeric(as.character(day))) %>% 
+  ggplot(aes(x = acc_temp, y = ctmax)) + 
+  geom_point(size = 3, position = position_jitter(width = 0.3, height = 0),
+             alpha = 0.5) + 
+  geom_smooth(se = F, colour = "black", linewidth = 2) + 
+  scale_x_continuous(breaks = c(10, 16, 22)) + 
+  labs(x = "Acc. Temp. (°C)", 
+       y = "CTmax (°C)") + 
+  theme_matt() + 
+  theme(legend.position = "right")
+```
+
+Accordingly, the mixed effects model indicates a significant interaction between acclimation duration and acclimation temperature.
+
+```{r}
+car::Anova(acc.model, type = "III") %>% 
+  knitr::kable()
+```
+
+The estimated marginal means from this model reinforce the trends observed in the CTmax data. The contrasts between the different acclimation treatments (10°C and 22°C) and the control treatment show an increasingly large negative effect over time in the 10°C treatment, but only a small increase over time in the 22°C treatment (Figure 4).
+
+```{r fig.width=5, fig.height=4}
+emmeans::emmeans(acc.model, "acc_temp", by = "day") %>% emmeans::contrast("trt.vs.ctrlk", ref = 2) %>% data.frame() %>% 
+  mutate(contrast = if_else(contrast == "acc_temp10 - acc_temp16", "Cold Acc.", "Hot Acc."),
+         day = as.numeric(as.character(day))) %>% 
+  ggplot(aes(x = day, y = estimate, colour = contrast)) + 
+  geom_hline(yintercept = 0) +
+  geom_point(size = 3, alpha = 0.5) + 
+  geom_smooth(method = "lm", linewidth = 2, se = F) + 
+  scale_colour_manual(values = c("Cold Acc." = "darkcyan", 
+                                 "Hot Acc." = "gold")) + 
+  labs(x = "Acclimation Duration",
+       y = "Acclimation Effect (°C)") + 
+  theme_matt(base_size = 12) + 
+  theme(legend.position = "right")
+```
+
+## Discussion
+
+The goal of this experiment was to test the effect of different acclimation temperatures on the upper thermal limits of *Diacyclops navus*, as well as the rate of acclimation to these different temperatures. CTmax was measured over a period of six days for individuals exposed to a cold (10°C) and warm (22°C) acclimation temperature, along with a control group exposed to a constant 16°C. These experimens were repeated three times. Animals acclimated to lower temperatures had decreased CTmax, but there was no effect of acclimation to higher temperatures. Acclimation to lower temperatures occurred gradually throughout the six day period.
+
+Contrary to predictions, we found that the CTmax reaction norm was non-linear, with a decrease in CTmax in the cold group compared to the control and no change in the CTmax of the warm group in comparison to the control. This provides partial support for our initial hypothesis that CTmax would correlate with acclimation temperature. *Diacyclops navus* appears to be able to acclimate to colder temperatures, but not to warming temperatures. Given the predicted increase in water temperatures over the next century, this lack of acclimation capacity suggests *D. navus* may be particularly vulnerable to climate change. Decreases in the population sizes of *D. navus* could result in cascading effects across trophic levels, with decreased prey abundance for fish and decreased grazing pressure on phytoplankton and microzooplankton, potentially promoting algal blooms and hypoxia. Temperature affects a range of other factors in experimental vessels, including food quantity and quality, oxygen concentrations, and bacterial growth rates. These factors likely had little effect on the patterns we observed as water volumes in the dishes were small and likely equilibrated quickly, and individuals were moved to fresh media several times throughout each experimental replicate. One potential factor to consider is that the individuals used in these experiments were part of the F0 generation, meaning the conditions experienced during development are unknown. Further, as a consequence of the time spent under laboratory conditions, individuals were several weeks old at the time of the experiments - it is unclear how acclimation capacity changes as individuals age. It is also possible that the duration of acclimation was too short for the warm acclimation group to mount a response. The onset of heatwaves in lakes can be rapid [@woolway2021], however, and the lack of a rapid acclimation response suggests these kinds of events might have strong impacts on population dynamics in this species.
+
+Our second question focused on the rate of acclimation. The lack of a strong acclimation response in the warm-acclimation group means that we are unable to test our hypothesis that acclimation occurs more rapidly at higher temperatures than lower temperatures, although our observations do suggest that if acclimation to warming occurs at all, longer time periods are required than for acclimation to cooling. The gradual acclimation to cooling over the six day period could reflect the benefit of maintaining high thermal limits in fluctuating environments. Short-term fluctuations like diel temperature cycles and heatwaves can expose populations to a range of temperatures. Given the assumed costs of acclimation [@delisle2023], there may be a fitness advantage of slow acclimation rather than rapidly adjusting thermal limits. Because temperature changes in freshwater ecosystems can sometimes be volatile, the slow acclimation rate could also increase the likelihood of survival during sudden temperature increases, and provide stability for an organism’s systems and functions to make up for the unstable environment.
+
+The rate of acclimation may instead be tailored to responding to longer timescale warming and cooling (e.g. seasonality and climate change). In these cases, temperature change occurs over several weeks to months. Acclimation capacity in *D. navus* may be adapted to track these more gradual rates of temperature change. These forms of seasonal acclimation have been documented across a range of taxa [@huey2022]. Although *D. navus* seems to have little capacity for quickly acclimating to warmer temperatures, it is possible that acclimation over longer timescales may impact vulnerability to climate change. Acclimation can provide time to allow populations to adapt to warmer temperatures [@kelly2019a]. Plasticity can also shield sensitive genotypes from selection, reducing the likelihood of evolutionary rescue [@fox2019]. The limited acclimation response we observed suggests the population may have little buffer against acute warming. While this increases near-term vulnerability [@somero2010], this limited buffering may increase the efficiency of selection on standing genetic variation, promoting long term evolutionary rescue [@bell2017].
+
+Our results establish a foundation for future experiments on how different acclimation temperatures affect the rate of acclimation and the upper thermal limits of *D. navus*. The warm acclimation group did not show a strong acclimation response during the six day acclimation period. In the future, the time to acclimate could be extended beyond 6 days to test whether acclimation to warming requires longer time periods. *D. navus* is distributed across a large geographic area and is found across a broad elevational range. Further, populations from different areas have also been shown to exhibit different traits [@reid1989]. *D. navus* from other locations could potentially have different responses to the different acclimation temperatures. Future experiments could test for local adaptation of upper thermal limits and the rate of acclimation using *D. navus* from multiple populations. This experiment examined acclimation capacity at temperatures 6°C higher and lower than the control. An experiment in the future could include additional acclimation temperatures at higher resolution (1°C intervals, for example) to improve our understanding of how acclimation capacity and rate of acclimation are affected by the magnitude of temperature change.
