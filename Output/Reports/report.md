@@ -1,6 +1,6 @@
 CTmax acclimation in Diacyclops navus
 ================
-2025-08-20
+2025-08-24
 
 - [Project Description](#project-description)
 - [CTmax Measurements](#ctmax-measurements)
@@ -65,7 +65,7 @@ ctmax_data %>%
              position = position_jitter(width = 0.05, height = 0)) +
   geom_line(linewidth = 1.5) + 
   geom_point(size = 3) + 
-  scale_colour_manual(values = c("slateblue", "forestgreen", "gold")) + 
+  scale_colour_manual(values = c("darkcyan", "chartreuse3", "gold")) +
   labs(colour = "Acc. Temp.",
        y = "CTmax (°C)",
        x = "Experiment Day") +
@@ -73,7 +73,7 @@ ctmax_data %>%
   theme(legend.position = "right")
 ```
 
-<img src="../Figures/markdown/unnamed-chunk-2-1.png" style="display: block; margin: auto;" />
+<img src="../Figures/markdown/ctmax-summary-figure-1.png" style="display: block; margin: auto;" />
 
 Data is shown below separated by acclimation temperature, with mean
 CTmax on each day for each of the three experimental replicates. There
@@ -89,7 +89,7 @@ ctmax_data %>% group_by(day, acc_temp, exp_rep) %>%
   geom_point(size = 3, alpha = 0.5) +
   geom_smooth(method = "lm", se = F, 
               linewidth = 2) + 
-  scale_colour_manual(values = c("slateblue", "forestgreen", "gold")) + 
+scale_colour_manual(values = c("darkcyan", "chartreuse3", "gold")) +
   labs(colour = "Acc. Temp.",
        y = "CTmax (°C)",
        x = "Experiment Day") +
@@ -97,7 +97,7 @@ ctmax_data %>% group_by(day, acc_temp, exp_rep) %>%
   theme(legend.position = "right")
 ```
 
-<img src="../Figures/markdown/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
+<img src="../Figures/markdown/ctmax-over-time-facets-1.png" style="display: block; margin: auto;" />
 
 Data here is shown for each experimental replicate separately.
 
@@ -112,13 +112,13 @@ ctmax_data %>% group_by(exp_rep, day, rep_id, acc_temp) %>%
              position = position_jitter(width = 0.05, height = 0)) +
   geom_line(linewidth = 1.5) + 
   geom_point(size = 3) + 
-  scale_colour_manual(values = c("slateblue", "forestgreen", "gold")) + 
+scale_colour_manual(values = c("darkcyan", "chartreuse3", "gold")) +
   labs(colour = "Acc. Temp.") +
   theme_matt() + 
   theme(legend.position = "right")
 ```
 
-<img src="../Figures/markdown/unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
+<img src="../Figures/markdown/exp-rep-summary-1.png" style="display: block; margin: auto;" />
 
 ## Model
 
@@ -140,7 +140,7 @@ acc.model = lme4::lmer(ctmax ~ day * acc_temp + (1|tube) + (1|exp_rep),
 performance::check_model(acc.model)
 ```
 
-<img src="../Figures/markdown/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
+<img src="../Figures/markdown/model-performance-1.png" style="display: block; margin: auto;" />
 
 The model indicates a significant interaction between acclimation
 temperature and the acclimation duration.
@@ -175,7 +175,7 @@ emmeans::emmeans(acc.model, "acc_temp", by = "day") %>% emmeans::contrast("trt.v
   theme(panel.grid = element_blank())
 ```
 
-<img src="../Figures/markdown/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
+<img src="../Figures/markdown/emmeans-summary-1.png" style="display: block; margin: auto;" />
 
 The acclimation effect steadily increases with time for the cold
 acclimation treatment (meaning CTmax gradually decreased over time).
@@ -197,7 +197,7 @@ emmeans::emmeans(acc.model, "acc_temp", by = "day") %>% emmeans::contrast("trt.v
   theme(legend.position = "right")
 ```
 
-<img src="../Figures/markdown/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
+<img src="../Figures/markdown/emmeans-contrasts-over-time-1.png" style="display: block; margin: auto;" />
 
 ## Acclimation Response Ratios
 
@@ -234,7 +234,7 @@ ctmax_data %>%
   theme(legend.position = "right")
 ```
 
-<img src="../Figures/markdown/unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
+<img src="../Figures/markdown/reaction-norm-1.png" style="display: block; margin: auto;" />
 
 As a consequence of these changes, the ARR changed over time, as shown
 below.
@@ -262,47 +262,4 @@ ggplot(daily_arr, aes(x = day, y = arr)) +
   theme_matt()
 ```
 
-<img src="../Figures/markdown/unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
-
-The same analysis was performed with just the cold acclimation and
-control treatments.
-
-``` r
-
-subset_daily_arr = ctmax_data %>% 
-  filter(acc_temp != 22) %>% 
-  split(filter(ctmax_data, acc_temp != 22)$day) %>% 
-  map(\(df) lm(ctmax ~ acc_temp, data = df)) %>% 
-  map(coef) %>% 
-  map_dbl("acc_temp") %>% 
-  data.frame() %>% 
-  rownames_to_column(var = "day") %>% 
-  janitor::clean_names() %>% 
-  select(day, "arr" = x) %>% 
-  mutate(day = as.numeric(as.character(day))) 
-
-ggplot(subset_daily_arr, aes(x = day, y = arr)) + 
-  geom_hline(yintercept = 0) + 
-  geom_point(size = 3) + 
-  geom_smooth(method = "lm", formula = y~log(x + 0.06)) + 
-  theme_matt()
-```
-
-<img src="../Figures/markdown/unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
-
-The pattern in ARR is similar until Day 6, when the ‘cold only’ subset
-results in a substantially larger ARR than the entire data set.
-
-``` r
-
-bind_rows(mutate(daily_arr, "set" = "full"), 
-          mutate(subset_daily_arr, "set" = "cold only")) %>% 
-  mutate(day = factor(day)) %>% 
-  ggplot(aes(x = day, y = arr, fill = set)) + 
-  geom_hline(yintercept = 0) + 
-  geom_bar(stat = "identity", position = position_dodge(width = 0.9)) + 
-  scale_fill_manual(values = c("dodgerblue", "indianred")) + 
-  theme_matt()
-```
-
-<img src="../Figures/markdown/unnamed-chunk-12-1.png" style="display: block; margin: auto;" />
+<img src="../Figures/markdown/arr-over-time-1.png" style="display: block; margin: auto;" />
